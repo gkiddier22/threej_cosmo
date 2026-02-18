@@ -1,0 +1,54 @@
+[build-system]
+requires = ["setuptools>=61.0", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "threej_cosmo"
+version = "0.1.0"
+description = "Fast Wigner 3j symbol-based coupling matrices for CMB analysis"
+readme = "README.md"
+license = {text = "MIT"}
+authors = [
+    {name = "Georgia Kiddier", email = "georgia.kiddier@example.com"}
+]
+requires-python = ">=3.8"
+classifiers = [
+    "Development Status :: 4 - Beta",
+    "Intended Audience :: Science/Research",
+    "License :: OSI Approved :: MIT License",
+    "Operating System :: OS Independent",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.8",
+    "Programming Language :: Python :: 3.9",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Topic :: Scientific/Engineering :: Astronomy",
+    "Topic :: Scientific/Engineering :: Physics",
+]
+keywords = ["CMB", "cosmology", "Wigner 3j", "coupling matrix", "pseudo-Cl", "GPU"]
+dependencies = [
+    "numpy>=1.20",
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest>=6.0",
+    "matplotlib>=3.0",
+]
+full = [
+    "matplotlib>=3.0",
+    "healpy>=1.15",
+]
+
+[project.urls]
+Homepage = "https://github.com/gkiddier22/threej_cosmo"
+Repository = "https://github.com/gkiddier22/threej_cosmo"
+Issues = "https://github.com/gkiddier22/threej_cosmo/issues"
+
+[tool.setuptools]
+packages = ["threej_cosmo"]
+include-package-data = true
+
+[tool.setuptools.package-data]
+"*" = ["../src/*.c", "../src/Makefile", "../src_gpu/*.c", "../src_gpu/Makefile", "../src_gpu/README.md"]

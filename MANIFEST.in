@@ -1,0 +1,8 @@
+include README.md
+include LICENSE
+include src/*.c
+include src/Makefile
+include src_gpu/*.c
+include src_gpu/README.md
+include src_gpu/Makefile
+recursive-include threej_cosmo *.py

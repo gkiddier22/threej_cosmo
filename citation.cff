@@ -1,0 +1,23 @@
+cff-version: 1.2.0
+message: "If you use this software, please cite it using the following metadata."
+title: "threej_cosmo"
+version: "1.0.0"
+authors:
+  - family-names: Kiddier
+    given-names: Georgia
+    orcid: "https://orcid.org/0009-0001-3404-2167"
+    affiliation: "University of Cambridge"
+date-released: 2025-04-29
+license: "MIT"
+repository-code: "https://github.com/gkiddier22/threej_cosmo"
+keywords:
+  - coupling matrix
+  - Wigner 3j symbols
+  - cosmology
+  - CMB
+  - numerical methods
+abstract: >
+  `threej_cosmo` is a fast numerical implementation for computing Wigner 3j symbols,
+  optimized for use in CMB coupling matrix calculations and similar applications in theoretical cosmology.
+  It provides both a C-based algorithm and Python bindings for ease of integration
+  into existing cosmological analysis pipelines.

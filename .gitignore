@@ -1,0 +1,44 @@
+.DS_Store
+
+# Ignore large data files
+data/COM_Mask*
+!data/README.md
+
+# Local development versions (kept locally, not in repo)
+src/thrj_000_opt.c
+src/thrj_220_opt.c
+
+# Compiled binaries and object files
+src/thrj_000
+src/thrj_220
+src/thrj_000_opt
+src/thrj_220_opt
+src/*.o
+src_gpu/thrj_000_gpu
+src_gpu/thrj_220_gpu
+src_gpu/*.o
+
+# Results (generated output)
+results/*
+!results/.gitkeep
+
+# Benchmark results and temporary files
+benchmark_results.csv
+benchmark_cpu_results.csv
+tmp_*.bin
+*.png
+*.pdf
+
+# Reference matrices (generated locally for testing)
+tests/reference/
+
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+*.egg
+dist/
+build/
+
+# Notebooks (development only)
+*.ipynb
