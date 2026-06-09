@@ -99,19 +99,19 @@ int main(int argc, char *argv[]) {
             const double *wl_actual = ((k-i)&1) ? wl_odd : wl_even;
             int l0 = (k-i)/2;
             for (int ofs=0; ofs<=i; ++ofs) {
-                double lmbda_sq = i * (i + 1.0) * (k + 1.0) * (k + 2.0);
+                double lmbda_sq = i*(i+1.)*(k+1.)*(k+2.);
 
-                double lmbda2 = (k+ofs+1) * (2*(i-ofs) + 1);
+                double lmbda2 = (k+ofs+1.) * (2.*(i-ofs)+1.);
 
-                double A_sq = lmbda_sq * sqr(1. + 2.0/i * (1.0 - lmbda2/((i+1)*(k+1))));
+                double A_sq = lmbda_sq * sqr(1. + 2./i * (1. - lmbda2/((i+1.)*(k+1.))));
 
-                double pref_5_num_sq = 4.*lmbda2 * (2*(k-i+ofs) + 1) * ofs * (2*(k+ofs) + 3.0) * (i+1-ofs) * (k+1-i+ofs) * (2*ofs - 1);
+                double pref_5_num_sq = 4.*lmbda2 * (2.*(k-i+ofs) + 1.) * ofs * (2.*(k+ofs) + 3.) * (i+1.-ofs) * (k+1.-i+ofs) * (2.*ofs - 1.);
                 double B_sq = pref_5_num_sq / lmbda_sq;
 
                 double threej_000_sq = g[i-ofs] * g[k-i+ofs] * g[ofs] * one_g_special[k+ofs];
                 double threej_000_2_sq = g[i-ofs+1] * g[k-i+ofs+1] * g[ofs-1] * one_g_special[k+ofs+1];
 
-                double inner_sq = A_sq * threej_000_sq -2.0 * sqrt(A_sq*B_sq*threej_000_sq * threej_000_2_sq) + B_sq * threej_000_2_sq;
+                double inner_sq = A_sq * threej_000_sq - 2. * sqrt(A_sq*B_sq*threej_000_sq * threej_000_2_sq) + B_sq * threej_000_2_sq;
                 j3_sum += wl_actual[l0+ofs] * inner_sq / ((i-1.)*(i+2.)*(k-1.)*k);
             }
             m[i * N + k] = j3_sum*(2*k+1);
