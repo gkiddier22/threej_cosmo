@@ -206,7 +206,7 @@ def ensure_cpu_binaries_compiled(force: bool = False) -> None:
         if output.exists() and not force:
             continue
 
-        cmd = [compiler] + flags + ["-o", str(output), str(source)]
+        cmd = [compiler] + flags + ["-o", str(output), str(source)] + ["-lm"]
         print(f"Compiling {name} (CPU)...")
 
         result = subprocess.run(cmd, capture_output=True, text=True)
