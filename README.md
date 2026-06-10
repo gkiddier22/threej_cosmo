@@ -4,7 +4,7 @@ Fast computation of CMB mode-coupling matrices using optimised Wigner 3j symbol 
 
 This package computes the coupling matrices $K^{TT}$, $K^{EE}$, and $K^{EB}$ required for pseudo-Cl power spectrum estimation on the masked sky. The method exploits analytic structure in the Wigner 3j symbols to achieve O(10) speedups over standard recursion-based approaches (e.g. pspy/MASTER), with additional O(10) acceleration on GPUs.
 
-Based on Kiddier & Gratton (2026).
+Based on [Kiddier & Gratton (2026)](https://doi.org/10.1093/mnras/stag1075).
 
 ## Installation
 
@@ -115,7 +115,10 @@ If you use this code, please cite:
 @article{kiddier2026threej,
   author = {Kiddier, Georgia and Gratton, Steven},
   title = {Fast computation of temperature and polarization coupling matrices},
-  year = {2026}
+  journal = {Monthly Notices of the Royal Astronomical Society},
+  year = {2026},
+  doi = {10.1093/mnras/stag1075},
+  url = {https://doi.org/10.1093/mnras/stag1075}
 }
 ```
 
