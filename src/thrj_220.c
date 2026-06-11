@@ -35,11 +35,11 @@ int main(int argc, char *argv[]) {
 
     // Allocate arrays - use proper sizes
     double *wl = (double*) calloc(2*lmax+1, sizeof(double));
-    double *g = (double*) calloc(2 * lmax + 1, sizeof(double));
-    double *one_g_special = (double*) calloc(2 * lmax + 1, sizeof(double));
+    double *g = (double*) calloc(2*lmax+1, sizeof(double));
+    double *fct = (double*) calloc(2*lmax+1, sizeof(double));
     double *m = (double*) calloc((lmax+1)*(lmax+1), sizeof(double));
 
-    if (!wl || !g || !one_g_special || !m) {
+    if (!wl || !g || !fct || !m) {
         fprintf(stderr, "Memory allocation failed!\n");
         return -1;
     }
@@ -65,18 +65,11 @@ int main(int argc, char *argv[]) {
     // Precompute lookup tables
 
     double lng = 0.0;
-    g[0] = 1.;
-    one_g_special[0] = 1.0;
-    for (int i = 1; i < 2 * lmax + 1; i++) {
-        lng += log((i - 0.5) / i);
+    for (int i=0; i<2*lmax+1; i++) {
         g[i] = exp(lng);
-        one_g_special[i] = exp(-lng)/(2*i+1.);
-    }
-
-    // Pre-scale wl array
-    double scale_factor = M_1_PI * 0.25;
-    for (int l = 0; l < 2*lmax+1; l++) {
-        wl[l] *= (2 * l + 1) * scale_factor;
+        fct[i] = 1./(g[i]*(2*i+1.));
+        lng += log((i+0.5) / (i+1.));
+        wl[i] *= (2*i+1) * (M_1_PI * 0.25);
     }
 
     // split wl into even and odd indices, to improve memory accesses
@@ -87,13 +80,10 @@ int main(int argc, char *argv[]) {
     for (int l = 0; l < lmax; l++)
       wl_odd[l] = wl[2*l+1];
 
-    const int LMAX = lmax;
-    const int N = LMAX + 1;
-
     double start = omp_get_wtime();
     #pragma omp parallel for schedule(dynamic)
-    for (int i = 2; i < N; i++) {
-        for (int k = i; k < N; k++) {
+    for (int i=2; i<=lmax; i++) {
+        for (int k=i; k<=lmax; k++) {
             double j3_sum = 0.0;
 
             const double *wl_actual = ((k-i)&1) ? wl_odd : wl_even;
@@ -105,17 +95,18 @@ int main(int argc, char *argv[]) {
 
                 double A_sq = lmbda_sq * sqr(1. + 2./i * (1. - lmbda2/((i+1.)*(k+1.))));
 
-                double pref_5_num_sq = 4.*lmbda2 * (2.*(k-i+ofs) + 1.) * ofs * (2.*(k+ofs) + 3.) * (i+1.-ofs) * (k+1.-i+ofs) * (2.*ofs - 1.);
+                double pref_5_num_sq = 4.*lmbda2 * (2.*(k-i+ofs+1) - 1.) * (k-i+ofs+1) * ofs * (2*(k+ofs)+3.) * (i-ofs+1.) * (2*ofs-1.);
                 double B_sq = pref_5_num_sq / lmbda_sq;
-
-                double threej_000_sq = g[i-ofs] * g[k-i+ofs] * g[ofs] * one_g_special[k+ofs];
-                double threej_000_2_sq = g[i-ofs+1] * g[k-i+ofs+1] * g[ofs-1] * one_g_special[k+ofs+1];
+//wl_actual[l0+ofs] * fct[k+ofs] * g[k-i+ofs] * g[ofs] * g[i-ofs];
+                double threej_000_sq = g[i-ofs] * g[k-i+ofs] * g[ofs] * fct[k+ofs];
+                double threej_000_2_sq = g[i-ofs+1] * g[k-i+ofs+1] * g[ofs-1] * fct[k+ofs+1];
 
                 double inner_sq = A_sq * threej_000_sq - 2. * sqrt(A_sq*B_sq*threej_000_sq * threej_000_2_sq) + B_sq * threej_000_2_sq;
-                j3_sum += wl_actual[l0+ofs] * inner_sq / ((i-1.)*(i+2.)*(k-1.)*k);
+                double eta_sq = ((i-1.)*(i+2.)*(k-1.)*k);
+                j3_sum += wl_actual[l0+ofs] * inner_sq / eta_sq;
             }
-            m[i * N + k] = j3_sum*(2*k+1);
-            m[k * N + i] = j3_sum*(2*i+1);
+            m[i * (lmax+1) + k] = j3_sum*(2*k+1);
+            m[k * (lmax+1) + i] = j3_sum*(2*i+1);
         }
     }
 
