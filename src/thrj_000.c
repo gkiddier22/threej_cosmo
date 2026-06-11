@@ -85,6 +85,7 @@ int main(int argc, const char *argv[]) {
   double start = omp_get_wtime();
 
 #ifdef EXPLICIT_SIMD
+
   #pragma omp parallel for schedule(dynamic)
   for (int i=0; i<=lmax; i++) {
     for (int k=i; k<=lmax; k+=VLEN) {
@@ -100,7 +101,9 @@ int main(int argc, const char *argv[]) {
       }
     }
   }
+
 #else
+
   // split wl into even and odd indices, to improve memory accesses
   double *wl_even = (double*) calloc(lmax+1, sizeof(double));
   for (int l = 0; l <= lmax; l++)
@@ -122,6 +125,7 @@ int main(int argc, const char *argv[]) {
       m[k*(lmax+1)+i] = j3_sum * (2. * i + 1.);
     }
   }
+
 #endif
 
   printf("Wall-clock time: %g seconds\n", omp_get_wtime() - start);
