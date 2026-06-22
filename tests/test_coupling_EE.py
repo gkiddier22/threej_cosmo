@@ -13,7 +13,7 @@ import matplotlib.pyplot as plt
 from pathlib import Path
 from matplotlib.colors import LogNorm
 
-from threej_cosmo import coupling_matrix_EE
+from threej_cosmo import coupling_matrix_EE, coupling_matrix_TE, coupling_matrix_EB
 
 # Configuration
 LMAX = 5000
@@ -58,8 +58,19 @@ def main():
 
     # Compute coupling matrix using the package
     print(f"Computing {SPECTRUM_TYPE} coupling matrix (lmax={LMAX})...")
-    matrix = coupling_matrix_EE(window_cls, lmax=LMAX, verbose=True)
-
+    from time import time
+    t0=time()
+    matrix = coupling_matrix_EB(window_cls, lmax=LMAX, verbose=True)
+    print(time()-t0)
+    import ducc0
+    matrix_ducc = np.empty((1,LMAX+1,LMAX+1),dtype=np.float64)
+    t0=time()
+    ducc0.misc.experimental.coupling_matrix_rect_new(window_cls.reshape((1,-1)), optype=(3,), nthreads=8, res=matrix_ducc)
+    print("ducc time:",time()-t0)
+    matrix_ducc = matrix_ducc[0]
+    matrix_ducc *= (2*np.arange(LMAX+1)+1).reshape((1,-1))
+    print(ducc0.misc.l2error(matrix_ducc,matrix))
+    exit()
     # Save result
     matrix.tofile(OUTPUT_FILE)
     print(f"Matrix saved to {OUTPUT_FILE}")

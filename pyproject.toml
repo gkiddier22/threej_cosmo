@@ -51,4 +51,4 @@ packages = ["threej_cosmo"]
 include-package-data = true
 
 [tool.setuptools.package-data]
-"*" = ["../src/*.c", "../src/Makefile", "../src_gpu/*.c", "../src_gpu/Makefile", "../src_gpu/README.md"]
+"*" = ["../src/*.cc", "../src/Makefile", "../src_gpu/*.c", "../src_gpu/Makefile", "../src_gpu/README.md"]

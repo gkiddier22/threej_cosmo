@@ -8,7 +8,7 @@ License: MIT
 
 import numpy as np
 import matplotlib
-matplotlib.use('Agg')  # Non-interactive backend
+#matplotlib.use('Agg')  # Non-interactive backend
 import matplotlib.pyplot as plt
 from pathlib import Path
 from matplotlib.colors import LogNorm
@@ -16,7 +16,7 @@ from matplotlib.colors import LogNorm
 from threej_cosmo import coupling_matrix_TT
 
 # Configuration
-LMAX = 5000
+LMAX = 5
 
 # Paths
 SCRIPT_DIR = Path(__file__).parent
@@ -57,7 +57,26 @@ def main():
 
     # Compute coupling matrix using the package
     print(f"Computing TT coupling matrix (lmax={LMAX})...")
+    from time import time
+    t0 = time()
     matrix = coupling_matrix_TT(window_cls, lmax=LMAX, verbose=True)
+    print(time()-t0)
+    print(matrix)
+
+    import ducc0
+    matrix_ducc = np.empty((1,LMAX+1,LMAX+1),dtype=np.float64)
+    t0=time()
+    ducc0.misc.experimental.coupling_matrix_rect_new(window_cls.reshape((1,-1)), optype=(0,), nthreads=8, res=matrix_ducc)
+    print("ducc time:",time()-t0)
+    matrix_ducc = matrix_ducc[0]
+    matrix_ducc *= (2*np.arange(LMAX+1)+1).reshape((1,-1))
+    print(matrix_ducc)
+    print(ducc0.misc.l2error(matrix_ducc,matrix))
+
+    print(matrix.shape, matrix_ducc.shape)
+    import matplotlib.pyplot as plt
+    plt.imshow(matrix-matrix_ducc)
+    plt.show()
 
     # Save result
     matrix.tofile(OUTPUT_FILE)

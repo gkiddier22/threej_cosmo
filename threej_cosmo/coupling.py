@@ -67,7 +67,7 @@ def _run_coupling_program(
     Parameters
     ----------
     binary_name : str
-        Name of the binary ('thrj_000' or 'thrj_220')
+        Name of the binary ('thrj_all')
     window_cls : np.ndarray
         Window function Cls, must have at least 2*lmax+1 elements
     lmax : int
@@ -200,7 +200,7 @@ def coupling_matrix_TT(
     >>> K_TT = coupling_matrix_TT(window_cls, lmax=2000, backend="gpu")
     """
     return _run_coupling_program(
-        "thrj_000", window_cls, lmax, verbose=verbose, backend=backend
+        "thrj_all", window_cls, lmax, extra_args=["TT"], verbose=verbose, backend=backend
     )
 
 
@@ -245,7 +245,52 @@ def coupling_matrix_EE(
     (2001, 2001)
     """
     return _run_coupling_program(
-        "thrj_220", window_cls, lmax, extra_args=["EE"], verbose=verbose, backend=backend
+        "thrj_all", window_cls, lmax, extra_args=["EE"], verbose=verbose, backend=backend
+    )
+
+
+def coupling_matrix_TE(
+    window_cls: np.ndarray,
+    lmax: int,
+    verbose: bool = False,
+    backend: BackendType = "cpu",
+) -> np.ndarray:
+    """
+    Compute the TE coupling matrix.
+
+    Parameters
+    ----------
+    window_cls : np.ndarray
+        Window function power spectrum Cls from l=0 to l=2*lmax.
+        Can be computed from a mask using healpy.anafast().
+    lmax : int
+        Maximum multipole for the output coupling matrix.
+        The matrix will have shape (lmax+1, lmax+1).
+    verbose : bool, optional
+        Print timing information. Default False.
+    backend : str, optional
+        Computation backend: 'auto', 'cpu', or 'gpu'. Default 'cpu'.
+        - 'cpu': Use OpenMP-parallelized CPU code
+        - 'gpu': Use GPU-accelerated code (requires NVIDIA/AMD GPU compiler)
+        - 'auto': Use GPU if available, otherwise CPU
+
+    Returns
+    -------
+    np.ndarray
+        Coupling matrix K_EE of shape (lmax+1, lmax+1).
+        Element K[l1, l2] gives the coupling between multipoles l1 and l2.
+
+    Examples
+    --------
+    >>> import numpy as np
+    >>> from threej_cosmo import coupling_matrix_EE
+    >>> window_cls = np.fromfile("window_cls.bin", dtype=np.float64)
+    >>> K_TE = coupling_matrix_TE(window_cls, lmax=2000)
+    >>> print(K_TE.shape)
+    (2001, 2001)
+    """
+    return _run_coupling_program(
+        "thrj_all", window_cls, lmax, extra_args=["TE"], verbose=verbose, backend=backend
     )
 
 
@@ -290,5 +335,5 @@ def coupling_matrix_EB(
     (2001, 2001)
     """
     return _run_coupling_program(
-        "thrj_220", window_cls, lmax, extra_args=["EB"], verbose=verbose, backend=backend
+        "thrj_all", window_cls, lmax, extra_args=["EB"], verbose=verbose, backend=backend
     )
