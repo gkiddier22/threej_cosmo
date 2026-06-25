@@ -47,7 +47,7 @@ def get_binary_path(name: str, backend: str = "cpu") -> Path:
 
 def find_cpu_compiler() -> Optional[str]:
     """Find an available C compiler with OpenMP support for CPU."""
-    compilers = ["gcc-15", "gcc-14", "gcc-13", "gcc-12", "gcc-11", "gcc"]
+    compilers = ["g++-15", "g++-14", "g++-13", "g++-12", "g++-11", "g++"]
     homebrew_paths = ["/opt/homebrew/bin", "/usr/local/bin"]
 
     for compiler in compilers:
@@ -170,7 +170,7 @@ def get_available_backends() -> List[str]:
 
 def ensure_cpu_binaries_compiled(force: bool = False) -> None:
     """
-    Ensure CPU C binaries are compiled.
+    Ensure CPU C++ binaries are compiled.
 
     Parameters
     ----------
@@ -178,7 +178,7 @@ def ensure_cpu_binaries_compiled(force: bool = False) -> None:
         If True, recompile even if binaries exist
     """
     src_dir = get_src_dir()
-    binaries = ["thrj_000", "thrj_220"]
+    binaries = ["thrj_all"]
 
     needs_compile = force or any(
         not (src_dir / name).exists() for name in binaries
@@ -190,14 +190,14 @@ def ensure_cpu_binaries_compiled(force: bool = False) -> None:
     compiler = find_cpu_compiler()
     if compiler is None:
         raise RuntimeError(
-            "No C compiler with OpenMP support found. "
+            "No C++ compiler with OpenMP support found. "
             "Install gcc with: brew install gcc (macOS) or apt install gcc (Linux)"
         )
 
     flags = ["-O3", "-march=native", "-fopenmp", "-ffast-math", "-lm"]
 
     for name in binaries:
-        source = src_dir / f"{name}.c"
+        source = src_dir / f"{name}.cc"
         output = src_dir / name
 
         if not source.exists():

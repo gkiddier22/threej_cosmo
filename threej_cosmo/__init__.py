@@ -27,6 +27,7 @@ Example usage:
 from .coupling import (
     coupling_matrix_TT,
     coupling_matrix_EE,
+    coupling_matrix_TE,
     coupling_matrix_EB,
 )
 from .utils import (
